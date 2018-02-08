@@ -21,7 +21,13 @@ namespace SampleBackend.Controllers
         // GET: api/Students
         public IQueryable<Student> GetStudents()
         {
-            return db.Students;
+            /*var results = from s in db.Students
+                          orderby s.FirstName ascending
+                          select s;*/
+
+            var results = db.Students.OrderBy(s => s.FirstName);
+
+            return results;
         }
 
         // GET: api/Students/5
@@ -35,6 +41,18 @@ namespace SampleBackend.Controllers
             }
 
             return Ok(student);
+        }
+
+        [Route("api/Students/GetByName")]
+        [HttpGet]
+        public async Task<IEnumerable<Student>> GetStudentByName(string name)
+        {
+            var results = await (from s in db.Students
+                          where s.FirstName.Contains(name) || s.LastName.Contains(name)
+                          orderby s.FirstName ascending
+                          select s).ToListAsync();
+
+            return results;
         }
 
         // PUT: api/Students/5

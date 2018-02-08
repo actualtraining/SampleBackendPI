@@ -13,6 +13,7 @@ namespace SampleBackend.DAL
         public SchoolContext() : base("SchoolContext")
         {
             //Database.SetInitializer(new SchoolInitializer());
+            //this.Configuration.LazyLoadingEnabled = false;
             this.Configuration.ProxyCreationEnabled = false;
         }
 
