@@ -12,7 +12,8 @@ namespace SampleBackend.DAL
     {
         public SchoolContext() : base("SchoolContext")
         {
-
+            //Database.SetInitializer(new SchoolInitializer());
+            this.Configuration.ProxyCreationEnabled = false;
         }
 
         public DbSet<Student> Students { get; set; }
