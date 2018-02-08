@@ -19,15 +19,22 @@ namespace SampleBackend.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: api/Students
-        public IQueryable<Student> GetStudents()
+        /*public IQueryable<Student> GetStudents()
         {
-            /*var results = from s in db.Students
+            var results = from s in db.Students
                           orderby s.FirstName ascending
-                          select s;*/
+                          select s;
 
             var results = db.Students.OrderBy(s => s.FirstName);
 
             return results;
+        }*/
+
+        [Authorize]
+        public IEnumerable<Student> GetStudents()
+        {
+            StudentDAL studentDAL = new StudentDAL();
+            return studentDAL.GetAll();
         }
 
         // GET: api/Students/5
@@ -48,9 +55,9 @@ namespace SampleBackend.Controllers
         public async Task<IEnumerable<Student>> GetStudentByName(string name)
         {
             var results = await (from s in db.Students
-                          where s.FirstName.Contains(name) || s.LastName.Contains(name)
-                          orderby s.FirstName ascending
-                          select s).ToListAsync();
+                                 where s.FirstName.Contains(name) || s.LastName.Contains(name)
+                                 orderby s.FirstName ascending
+                                 select s).ToListAsync();
 
             return results;
         }

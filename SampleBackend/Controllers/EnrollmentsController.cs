@@ -17,26 +17,15 @@ namespace SampleBackend.Controllers
 {
     public class EnrollmentsController : ApiController
     {
+        //http://arunendapally.com/post/implementation-of-single-sign-on-(sso)-in-asp.net-mvc
+
         private SchoolContext db = new SchoolContext();
 
         // GET: api/Enrollments
         public IEnumerable<EnrollmentVM> GetEnrollments()
         {
-            /*var results = from e in db.Enrollments.Include("Student").Include("Course")
-                          select new EnrollmentVM
-                          {
-                              EnrollmentID = e.EnrollmentID,
-                              StudentID = e.StudentID,
-                              CourseID = e.CourseID,
-                              FirstName = e.Student.FirstName,
-                              LastName = e.Student.LastName,
-                              EnrollmentDate = e.Student.EnrollmentDate,
-                              Title = e.Course.Title,
-                              Credits = e.Course.Credits,
-                              Grade = e.Grade
-                          };*/
-
-            var results = from e in db.Enrollments
+            var results = from e in db.Enrollments.Include("Student").Include("Course")
+                          where e.Course.Title.Contains("Mobi")
                           select new EnrollmentVM
                           {
                               EnrollmentID = e.EnrollmentID,
@@ -50,7 +39,23 @@ namespace SampleBackend.Controllers
                               Grade = e.Grade
                           };
 
+            /*var results = from e in db.Enrollments
+                          select new EnrollmentVM
+                          {
+                              EnrollmentID = e.EnrollmentID,
+                              StudentID = e.StudentID,
+                              CourseID = e.CourseID,
+                              FirstName = e.Student.FirstName,
+                              LastName = e.Student.LastName,
+                              EnrollmentDate = e.Student.EnrollmentDate,
+                              Title = e.Course.Title,
+                              Credits = e.Course.Credits,
+                              Grade = e.Grade
+                          };*/
+
             return results;
+
+            //return db.Enrollments.Include("Student").Include("Course").ToList();
         }
 
         // GET: api/Enrollments/5
@@ -110,9 +115,16 @@ namespace SampleBackend.Controllers
                 return BadRequest(ModelState);
             }
 
-            db.Enrollments.Add(enrollment);
-            await db.SaveChangesAsync();
-
+            try
+            {
+                db.Enrollments.Add(enrollment);
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateException duEx)
+            {
+                return InternalServerError(duEx);
+            }
+          
             return CreatedAtRoute("DefaultApi", new { id = enrollment.EnrollmentID }, enrollment);
         }
 

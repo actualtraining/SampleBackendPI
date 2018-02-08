@@ -11,6 +11,7 @@ namespace SampleBackend.Models
         public string LastName { get; set; }
         public string FirstName { get; set; }
         public DateTime EnrollmentDate { get; set; }
+        public string Address { get; set; }
         public virtual ICollection<Enrollment> Enrollments { get; set; }
     }
 }
